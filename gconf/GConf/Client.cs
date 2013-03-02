@@ -31,6 +31,17 @@ namespace GConf
 		[DllImport("gconf-2")]
 		static extern IntPtr gconf_client_get_default ();
 
+		[DllImport("dbus-glib-1")]
+		static extern void dbus_g_thread_init ();
+
+		static Client ()
+		{
+			// HACK: we have to initialize dbus' threading else GConf with its
+			// dbus backend will not be thread safe and SEGVs in our face, see:
+			// https://bugzilla.gnome.org/show_bug.cgi?id=683830
+			dbus_g_thread_init();
+		}
+
 		public Client ()
 		{
 			Initialize ();
